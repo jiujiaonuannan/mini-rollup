@@ -1,4 +1,5 @@
 // 模块依赖图对象的实现
+import { ModuleLoader } from 'ModuleLoader';
 import { dirname, resolve } from 'path';
 export class Graph {
   entryPath: string;
@@ -11,10 +12,17 @@ export class Graph {
     this.entryPath = resolve(entry);
     this.basedir = dirname(this.entryPath);
     this.bundle = bundle;
+
+    this.moduleLoader = new ModuleLoader(bundle);
   }
   
   async build() {
-    // 1. 获取并解析模块信息
+    // 1. 获取并解析模块信息，返回入口模块对象
+    const entryModule = await this.moduleLoader.fetchModule(
+      this.entryPath,
+      null,
+      true
+    );
     // 2. 构建依赖关系图
     // 3. 模块拓扑排序
     // 4. Tree Shaking, 标记需要包含的语句
